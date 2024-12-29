@@ -1,0 +1,6 @@
+category: Food,amount: 200.0,Date: 2024-12-28
+category: Travel,amount: 900.0,Date: 2024-12-28
+category: Food,amount: 80.0,Date: 2024-12-28
+category: Books,amount: 190.0,Date: 2024-12-28
+category: Festival decor,amount: 3000.0,Date: 2024-12-29
+category: Food,amount: 600.0,Date: 2024-12-29
