@@ -44,48 +44,61 @@ def view_expenses():
         print("Expense tracker file not found. No expenses to display.")
 
 def monthly_summary():
-  """
-  Calculates and displays the monthly summary of expenses, including a pie chart.
-  """
+    """
+    Calculates and displays the monthly and yearly summaries of expenses, including pie charts.
+    """
+    current_month = date.today().month
+    current_year = date.today().year
+    total_monthly_expenses = 0
+    total_yearly_expenses = 0
+    monthly_expenses = {}
+    yearly_expenses = {}
 
-  current_month = date.today().month
-  current_year = date.today().year
-  total_expenses = 0
-  category_expenses = {}
+    try:
+        with open("expenses.txt", "r") as f:
+            for line in f:
+                parts = line.strip().split(",")
+                if len(parts) >= 3:
+                    category = parts[0].split(": ")[1]
+                    amount = float(parts[1].split(": ")[1])
+                    expense_date = datetime.strptime(parts[2].split(": ")[1], "%Y-%m-%d").date()
 
-  try:
-    with open("expenses.txt", "r") as f:
-      for line in f:
-        parts = line.strip().split(",")
-        if len(parts) >= 3:  # Ensure enough parts for category and date
-          category = parts[0].split(": ")[1]
-          amount = float(parts[1].split(": ")[1])
-          expense_date = datetime.strptime(parts[2].split(": ")[1], "%Y-%m-%d").date()
+                    # Monthly Expenses
+                    if expense_date.month == current_month and expense_date.year == current_year:
+                        total_monthly_expenses += amount
+                        monthly_expenses[category] = monthly_expenses.get(category, 0) + amount
 
-          if expense_date.month == current_month and expense_date.year == current_year:
-            total_expenses += amount
-            category_expenses[category] = category_expenses.get(category, 0) + amount
+                    # Yearly Expenses
+                    if expense_date.year == current_year:
+                        total_yearly_expenses += amount
+                        yearly_expenses[category] = yearly_expenses.get(category, 0) + amount
 
-  except FileNotFoundError:
-    print("Expense tracker file not found. No summary available.")
-    return
+    except FileNotFoundError:
+        print("Expense tracker file not found. No summary available.")
+        return
 
-  # Print Monthly Summary
-  print(f"Monthly Summary (December {current_year}):")
-  print(f"Total Expenses: ${total_expenses:.2f}")
-  print("By Category:")
+    # Print Summaries
+    print(f"Monthly Summary ({current_month}/{current_year}):")
+    print(f"Total Monthly Expenses: ${total_monthly_expenses:.2f}")
+    for category, amount in monthly_expenses.items():
+        print(f"{category}: ${amount:.2f}")
 
-  for category, amount in category_expenses.items():
-    print(f"{category}: ${amount:.2f}")
+    print(f"\nYearly Summary ({current_year}):")
+    print(f"Total Yearly Expenses: ${total_yearly_expenses:.2f}")
+    for category, amount in yearly_expenses.items():
+        print(f"{category}: ${amount:.2f}")
 
-  # Create Pie Chart Data
-  labels = list(category_expenses.keys())
-  sizes = list(category_expenses.values())
+    # Generate Pie Charts
+    if monthly_expenses:
+        plt.figure(figsize=(10, 5))
+        plt.pie(monthly_expenses.values(), labels=monthly_expenses.keys(), autopct='%1.1f%%', startangle=90)
+        plt.title(f"Monthly Expenses ({current_month}/{current_year})")
+        plt.axis('equal')
+        plt.show()
 
-  # Create Pie Chart
-  fig, ax = plt.subplots()
-  ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
-  ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-  ax.set_title(f"Monthly Expenses ({current_month}/{current_year})")
-  plt.show()
-
+    if yearly_expenses:
+        plt.figure(figsize=(10, 5))
+        plt.pie(yearly_expenses.values(), labels=yearly_expenses.keys(), autopct='%1.1f%%', startangle=90)
+        plt.title(f"Yearly Expenses ({current_year})")
+        plt.axis('equal')
+        plt.show()
