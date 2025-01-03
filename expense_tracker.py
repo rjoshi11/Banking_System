@@ -1,21 +1,57 @@
 from datetime import date, datetime
 import matplotlib.pyplot as plt
+
+# Global variable for budget
+BUDGET_LIMIT = 0
+
+def set_budget_alert():
+    """
+    Sets a monthly budget limit and displays a warning if spending approaches or exceeds the limit.
+    """
+    global BUDGET_LIMIT
+    BUDGET_LIMIT = float(input("Set your monthly spending limit: "))
+    print(f"Budget limit set to ${BUDGET_LIMIT:.2f}.")
+
 def add_expense():
+    """
+    Adds an expense to the tracker and checks against the monthly budget limit.
+    """
+    global BUDGET_LIMIT
     while True:
-        categ=input("Enter category (e.g., Food, Travel): ")
-        amount=float(input("Enter amount:"))
+        categ = input("Enter category (e.g., Food, Travel): ")
+        amount = float(input("Enter amount: "))
         print(f"Date: {date.today()}")
 
         with open("expenses.txt", "a") as f:
             f.write(f"category: {categ},amount: {amount},Date: {date.today()}\n")
         print("Expense added successfully!")
-        # (Expense recorded in expenses.txt)
+
+        # Check if the budget is exceeded
+        current_month = date.today().month
+        current_year = date.today().year
+        total_monthly_expenses = 0
+
+        with open("expenses.txt", "r") as f:
+            for line in f:
+                parts = line.strip().split(",")
+                if len(parts) >= 3:
+                    amount = float(parts[1].split(": ")[1])
+                    expense_date = datetime.strptime(parts[2].split(": ")[1], "%Y-%m-%d").date()
+                    if expense_date.month == current_month and expense_date.year == current_year:
+                        total_monthly_expenses += amount
+
+        if BUDGET_LIMIT > 0:
+            if total_monthly_expenses > BUDGET_LIMIT:
+                print(f"⚠️ Warning: You have exceeded your monthly budget of ${BUDGET_LIMIT:.2f}!")
+            elif total_monthly_expenses > 0.9 * BUDGET_LIMIT:
+                print(f"⚠️ Alert: You are close to your monthly budget limit! Spent: ${total_monthly_expenses:.2f}")
+
         break
+
 def view_expenses():
     """
     Reads and displays all expenses from the expense tracker file, grouped by category.
     """
-
     try:
         with open("expenses.txt", "r") as f:
             expenses = f.readlines()
