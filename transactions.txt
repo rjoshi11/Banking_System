@@ -8,6 +8,3 @@ Account: 123456, Deposit: 1234, Total Balance: 101434, Date: 2024-12-26
 Account: 123456, Deposit: 200, Total Balance: 101634, Date: 2024-12-27
 Account: 123456, Deposit: 200.0, Total Balance: 101834.0, Date: 2024-12-27
 Account: 123456, Deposit: 500000.0, Total Balance: 601834.0, Date: 2024-12-27
-Account: 464172.0, Deposit: 200, Balance: 700.0
-Account: 937458.0, Deposit: 900.0, Balance: 1600.0
-Account: 123456.0, Deposit: 200.0, Balance: 602034.0
