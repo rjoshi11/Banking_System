@@ -4,7 +4,7 @@ import datetime
 import pwinput
 import random
 from colorama import Fore, Back, Style, init
-from expense_tracker import add_expense, view_expenses, monthly_summary
+from expense_tracker import set_budget_alert, add_expense, view_expenses, monthly_summary
 
 # Initialize Colorama
 init(autoreset=True)
@@ -115,8 +115,7 @@ def login():
 
 # Main Menu (main.py)
 while True:
-    print(Back.BLUE + Fore.BLACK + "\n----------------------- Welcome to the Banking System! "
-                                   "")
+    print(Back.BLUE + Fore.BLACK + "\n----------------------- Welcome to the Banking System! ------------------------")
     print(Fore.YELLOW + "1. Create Account")
     print(Fore.YELLOW + "2. Login")
     print(Fore.YELLOW + "3. Personal Expense Tracker")
@@ -128,25 +127,25 @@ while True:
         login()
     elif choice == 3:
         while True:
-            print(Back.MAGENTA + Fore.WHITE + "\n------------------ Welcome To Your Personal Expense Tracker! ------------------")
-            print(Fore.YELLOW + "1. Add Expense")
-            print(Fore.YELLOW + "2. View Expenses")
-            print(Fore.YELLOW + "3. Monthly Summary")
-            print(Fore.YELLOW + "4. Back to Main Menu")
+            print(
+                Back.MAGENTA + Fore.WHITE + "\n------------------ Welcome To Your Personal Expense Tracker! ------------------")
+            print(Fore.YELLOW + "1. Set Budget Alert")
+            print(Fore.YELLOW + "2. Add Expense")
+            print(Fore.YELLOW + "3. View Expenses")
+            print(Fore.YELLOW + "4. Monthly Summary")
+            print(Fore.YELLOW + "5. Back to Main Menu")
             tracker_choice = int(input(Fore.CYAN + "Enter your choice: "))
-            if tracker_choice == 1:
+
+            if tracker_choice == 1:  # Fixed from "choice" to "tracker_choice"
+                set_budget_alert()
+            elif tracker_choice == 2:  # Fixed from "choice" to "tracker_choice"
                 add_expense()
-            elif tracker_choice == 2:
+            elif tracker_choice == 3:  # Fixed from "choice" to "tracker_choice"
                 view_expenses()
-            elif tracker_choice == 3:
+            elif tracker_choice == 4:  # Fixed from "choice" to "tracker_choice"
                 monthly_summary()
-            elif tracker_choice == 4:
+            elif tracker_choice == 5:  # Fixed from "choice" to "tracker_choice"
+                print(Fore.GREEN + "Returning to the main menu...")
                 break
             else:
-                print(Fore.RED + "Invalid choice.")
-    elif choice == 4:
-        print(Fore.GREEN + "Thank you for using the Banking System. Goodbye!")
-        break
-    else:
-        print(Fore.RED + "Invalid choice. Please try again.")
-
+                print(Fore.RED + "Invalid choice. Please try again.")
