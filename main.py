@@ -1,5 +1,6 @@
 #Account_file
 #Main_menu
+import datetime
 import pwinput
 import random
 from colorama import Fore, Back, Style, init
@@ -11,11 +12,15 @@ init(autoreset=True)
 def create_account():
     print(Fore.CYAN + "\n--- Create Account ---")
     name = input(Fore.YELLOW + "Enter your name: ")
-    try:
-        deposit = float(input(Fore.YELLOW + "Enter your initial deposit: "))
-    except ValueError:
-        print(Fore.RED + "Invalid deposit amount. Please enter a number.")
-        return
+    while True:
+        try:
+            deposit = float(input(Fore.YELLOW + "Enter your initial deposit (minimum 500): "))
+            if deposit >= 500:
+                break
+            else:
+                print(Fore.RED + "Initial deposit must be at least 500. Please try again.")
+        except ValueError:
+            print(Fore.RED + "Invalid deposit amount. Please enter a number.")
     acc_num = random.randrange(100000, 999999)
     print(Fore.GREEN + f"Your account number is {acc_num}")
     pswd = pwinput.pwinput(prompt=Fore.YELLOW + "Enter a password: ", mask="*")
@@ -40,9 +45,14 @@ def login():
                     current_balance = float(deposit)
 
                     while True:
-                        user_choice = input(Fore.YELLOW + "Do you want to make a deposit? (yes/no): ").strip().lower()
-                        if user_choice == "yes":
-                            print(Fore.CYAN + "\nPerforming Transactions (Deposit):")
+                        print(Fore.CYAN + "\n--- Banking Options ---")
+                        print(Fore.YELLOW + "1. Deposit")
+                        print(Fore.YELLOW + "2. Withdraw")
+                        print(Fore.YELLOW + "3. Exit")
+                        user_choice = int(input(Fore.CYAN + "Enter your choice: "))
+
+                        if user_choice == 1:
+                            # Deposit Logic
                             try:
                                 deposit_amount = float(input(Fore.YELLOW + "Enter amount to deposit: "))
                                 if deposit_amount > 0:
@@ -50,8 +60,9 @@ def login():
                                     print(Fore.GREEN + f"Deposit successful! Current balance: {current_balance}")
 
                                     # Log transaction to transactions.txt
+
                                     with open("transactions.txt", "a") as t_file:
-                                        t_file.write(f"Account: {user_id}, Deposit: {deposit_amount}, Balance: {current_balance}\n")
+                                        t_file.write(f"Account: {user_id}, Deposit: {deposit_amount}, Balance: {current_balance} , Date:{datetime.date.today()}\n")
                                     print(Fore.GREEN + "(Transaction logged in transactions.txt)")
 
                                     # Update the accounts.txt file
@@ -62,11 +73,37 @@ def login():
                                     print(Fore.RED + "Invalid deposit amount.")
                             except ValueError:
                                 print(Fore.RED + "Invalid input. Please enter a numeric value.")
-                        elif user_choice == "no":
-                            print(Fore.GREEN + "No deposit made. Thank you!")
+
+                        elif user_choice == 2:
+                            # Withdraw Logic
+                            try:
+                                withdraw_amount = float(input(Fore.YELLOW + "Enter amount to withdraw: "))
+                                if 0 < withdraw_amount <= current_balance:
+                                    current_balance -= withdraw_amount
+                                    print(Fore.GREEN + f"Withdrawal successful! Current balance: {current_balance}")
+
+                                    # Log transaction to transactions.txt
+                                    with open("transactions.txt", "a") as t_file:
+                                        t_file.write(f"Account: {user_id}, Withdrawal: {withdraw_amount}, Balance: {current_balance}, Datetime:{datetime.date.today()}\n")
+                                    print(Fore.GREEN + "(Transaction logged in transactions.txt)")
+
+                                    # Update the accounts.txt file
+                                    accounts[i] = f"{name},{current_balance},{stored_acc_num},{stored_pswd}\n"
+                                    with open("accounts.txt", "w") as f:
+                                        f.writelines(accounts)
+                                elif withdraw_amount > current_balance:
+                                    print(Fore.RED + "Insufficient balance.")
+                                else:
+                                    print(Fore.RED + "Invalid withdrawal amount.")
+                            except ValueError:
+                                print(Fore.RED + "Invalid input. Please enter a numeric value.")
+
+                        elif user_choice == 3:
+                            print(Fore.GREEN + "Thank you for banking with us. Goodbye!")
                             break
+
                         else:
-                            print(Fore.RED + "Invalid choice. Please enter 'yes' or 'no'.")
+                            print(Fore.RED + "Invalid choice. Please select a valid option.")
 
                     break
         else:
@@ -78,7 +115,8 @@ def login():
 
 # Main Menu (main.py)
 while True:
-    print(Back.BLUE + Fore.WHITE + "\n----------------------- Welcome to the Banking System! -------------------------")
+    print(Back.BLUE + Fore.BLACK + "\n----------------------- Welcome to the Banking System! "
+                                   "")
     print(Fore.YELLOW + "1. Create Account")
     print(Fore.YELLOW + "2. Login")
     print(Fore.YELLOW + "3. Personal Expense Tracker")
@@ -111,3 +149,4 @@ while True:
         break
     else:
         print(Fore.RED + "Invalid choice. Please try again.")
+
